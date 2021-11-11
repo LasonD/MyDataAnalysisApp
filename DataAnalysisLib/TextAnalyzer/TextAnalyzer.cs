@@ -56,17 +56,7 @@ namespace DataAnalysisLib.TextAnalyzer
             }
         }
 
-        private void ProcessCharacter(char ch)
-        {
-            if (results.Distribution.ContainsKey(ch))
-            {
-                results.Distribution[ch]++;
-            }
-            else
-            {
-                results.Distribution.Add(ch, ZeroCount);
-            }
-        }
+        private void ProcessCharacter(char ch) => results.Add(ch);
 
         private async IAsyncEnumerable<string> EmitLinesAsync()
         {

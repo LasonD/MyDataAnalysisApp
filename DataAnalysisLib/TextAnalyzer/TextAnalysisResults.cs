@@ -4,7 +4,23 @@ namespace DataAnalysisLib.TextAnalyzer
 {
     internal class TextAnalysisResults
     {
-        public Dictionary<char, int> Distribution { get; set; }
+        private Dictionary<char, int> distribution { get; } = new Dictionary<char, int>();
+
+        public IReadOnlyDictionary<char, int> Distribution => distribution;
+
+        public long TotalCount { get; private set; }
+
+        public void Add(char ch)
+        {
+            if (distribution.ContainsKey(ch))
+            {
+                distribution[ch]++;
+            }
+            else
+            {
+                distribution.Add(ch, 1);
+            }
+        }
 
         public (char ch, int count) MostFrequent { get; set; }
 
