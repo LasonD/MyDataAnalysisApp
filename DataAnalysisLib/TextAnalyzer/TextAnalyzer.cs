@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -22,14 +21,12 @@ namespace DataAnalysisLib.TextAnalyzer
         {
             await ProcessDataAsync();
 
-            FindExtrema();
-
             AnalysisComplete = true;
         }
 
-        public (char characher, int count) MostFrequent => results.MostFrequent;
+        public KeyValuePair<char, int> MostFrequent => results.MostFrequent;
 
-        public (char characher, int count) LeastFrequent => results.LeastFrequent;
+        public KeyValuePair<char, int> LeastFrequent => results.LeastFrequent;
 
         public bool AnalysisComplete { get; private set; }
 
@@ -65,15 +62,6 @@ namespace DataAnalysisLib.TextAnalyzer
             {
                 yield return await reader.ReadLineAsync();
             }
-        }
-
-        private void FindExtrema()
-        {
-            var (chMin, countMin) = results.Distribution.OrderBy(x => x.Value).First();
-            var (chMax, countMax) = results.Distribution.OrderByDescending(x => x.Value).First();
-
-            results.LeastFrequent = (chMin, countMin);
-            results.MostFrequent = (chMax, countMax);
         }
 
         private void ThrowIfAnalysisNotComplete([CallerMemberName] string caller = "") =>

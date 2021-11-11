@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DataAnalysisLib.TextAnalyzer
 {
@@ -6,9 +7,9 @@ namespace DataAnalysisLib.TextAnalyzer
     {
         Task AnalyzeAsync();
 
-        (char characher, int count) MostFrequent { get; }
+        KeyValuePair<char, int> MostFrequent { get; }
 
-        (char characher, int count) LeastFrequent { get; }
+        KeyValuePair<char, int> LeastFrequent { get; }
 
         int GetCountOf(char ch);
     }

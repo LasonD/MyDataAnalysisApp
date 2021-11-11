@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace DataAnalysisLib.TextAnalyzer
 {
@@ -20,10 +21,12 @@ namespace DataAnalysisLib.TextAnalyzer
             {
                 distribution.Add(ch, 1);
             }
+
+            TotalCount++;
         }
 
-        public (char ch, int count) MostFrequent { get; set; }
+        public KeyValuePair<char, int> MostFrequent => Distribution.OrderByDescending(x => x.Value).First();
 
-        public (char ch, int count) LeastFrequent { get; set; }
+        public KeyValuePair<char, int> LeastFrequent => Distribution.OrderBy(x => x.Value).First();
     }
 }
