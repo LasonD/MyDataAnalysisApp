@@ -5,28 +5,41 @@ namespace DataAnalysisLib.TextAnalyzer
 {
     internal class TextAnalysisResults
     {
-        private Dictionary<char, int> distribution { get; } = new Dictionary<char, int>();
+        private readonly Dictionary<char, CharStat> charStats = new Dictionary<char, CharStat>();
 
-        public IReadOnlyDictionary<char, int> Distribution => distribution;
+        public IReadOnlyDictionary<char, CharStat> Distribution => charStats;
 
         public long TotalCount { get; private set; }
 
         public void Add(char ch)
         {
-            if (distribution.ContainsKey(ch))
+            CharStat stat;
+
+            if (charStats.ContainsKey(ch))
             {
-                distribution[ch]++;
+                stat = charStats[ch];
             }
             else
             {
-                distribution.Add(ch, 1);
+                stat = new CharStat(ch);
+
+                charStats.Add(ch, stat);
             }
 
+            stat.Occurrences++;
             TotalCount++;
         }
 
-        public KeyValuePair<char, int> MostFrequent => Distribution.OrderByDescending(x => x.Value).First();
+        public void CalculateFrequencies()
+        {
+            foreach (var stat in charStats.Values)
+            {
+                stat.CalcFrequency(TotalCount);
+            }
+        }
 
-        public KeyValuePair<char, int> LeastFrequent => Distribution.OrderBy(x => x.Value).First();
+        public KeyValuePair<char, CharStat> MostFrequent => Distribution.OrderByDescending(x => x.Value).First();
+
+        public KeyValuePair<char, CharStat> LeastFrequent => Distribution.OrderBy(x => x.Value).First();
     }
 }
