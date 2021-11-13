@@ -6,12 +6,12 @@ namespace DataAnalysisLib.TextAnalysisVisualization
 {
     public abstract class BaseTextAnalysisVisualizer
     {
-        protected readonly FileInfo outputFile;
+        protected readonly Stream outputStream;
         protected ITextAnalyzer analyzer;
 
-        protected BaseTextAnalysisVisualizer(FileInfo outputFile,  ITextAnalyzer analyzer)
+        protected BaseTextAnalysisVisualizer(Stream outputStream,  ITextAnalyzer analyzer)
         {
-            this.outputFile = outputFile;
+            this.outputStream = outputStream;
             this.analyzer = analyzer;
         }
 

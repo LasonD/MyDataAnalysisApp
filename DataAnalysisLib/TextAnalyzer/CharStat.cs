@@ -10,9 +10,9 @@ namespace DataAnalysisLib.TextAnalyzer
 
         public double Frequency { get; set; }
 
-        public double Occurrences { get; set; }
+        public long Occurrences { get; set; }
 
-        public void CalcFrequency(long total) => Frequency = Occurrences / total;
+        public void CalcFrequency(long total) => Frequency = (double)Occurrences / total;
 
         public bool Equals(CharStat other) => this.Char == other?.Char;
 

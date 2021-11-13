@@ -8,9 +8,17 @@ using OfficeOpenXml.Style;
 
 namespace DataAnalysisLib.TextAnalysisVisualization
 {
-    public class ExcelTableTextAnalysisVisualizer : BaseTextAnalysisVisualizer
+    public class ExcelTextAnalysisVisualizer : BaseTextAnalysisVisualizer
     {
-        public ExcelTableTextAnalysisVisualizer(FileInfo outputFile, ITextAnalyzer analyzer) : base(outputFile, analyzer)
+        private const int ChartHeightPx = 600;
+
+        public ExcelTextAnalysisVisualizer(string outputFilePath, ITextAnalyzer analyzer) : base(
+            new FileStream(outputFilePath, FileMode.OpenOrCreate), analyzer)
+        {
+
+        }
+
+        public ExcelTextAnalysisVisualizer(Stream outputStream, ITextAnalyzer analyzer) : base(outputStream, analyzer)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
         }
@@ -23,13 +31,25 @@ namespace DataAnalysisLib.TextAnalysisVisualization
             await CreateAndSaveReport();
         }
 
-        private Task CreateAndSaveReport()
+        private async Task<Stream> CreateAndSaveReport()
         {
             using var package = new ExcelPackage();
 
+            var workSheet = FillWorksheet(package, out var orderedData);
+
+            AddDistributionChart(workSheet, orderedData);
+
+            await package.SaveAsAsync(outputStream);
+
+            return package.Stream;
+        }
+
+        private ExcelWorksheet FillWorksheet(ExcelPackage package, out List<CharStat> orderedData)
+        {
             var workSheet = package.Workbook.Worksheets.Add(ReportName);
 
-            var orderedData = GetOrderedDataSet(out var minIndex, out var maxIndex);
+            orderedData = GetOrderedDataSet(out var minIndex, out var maxIndex)
+                .ToList();
 
             var range = workSheet.Cells["A1"].LoadFromCollection(orderedData, true);
             range.AutoFitColumns();
@@ -38,8 +58,18 @@ namespace DataAnalysisLib.TextAnalysisVisualization
             workSheet.Cells[maxIndex + 2, 1].AddComment("Max Extrema");
 
             range.Style.Border.BorderAround(ExcelBorderStyle.Medium);
+            return workSheet;
+        }
 
-            return package.SaveAsAsync(outputFile);
+        private static void AddDistributionChart(ExcelWorksheet workSheet, List<CharStat> orderedData)
+        {
+            var chart = workSheet.Drawings.AddBarChart("Characters Distribution Chart", OfficeOpenXml.Drawing.Chart.eBarChartType.Column3D);
+            chart.Title.Text = "Characters distribution";
+            chart.SetPosition(0, 0, 3, 0);
+            chart.SetSize(orderedData.Count * 20, ChartHeightPx);
+            var ser1 = chart.Series.Add(
+                workSheet.Cells[$"C2:C{orderedData.Count + 2}"],
+                workSheet.Cells[$"A2:A{orderedData.Count + 2}"]);
         }
 
         private IEnumerable<CharStat> GetOrderedDataSet(out int minIndex, out int maxIndex)
