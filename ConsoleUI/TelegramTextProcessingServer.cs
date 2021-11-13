@@ -33,7 +33,7 @@ namespace ConsoleUI
                 await botClient.SendTextMessageAsync(update.Message.From.Id, e.StackTrace, cancellationToken: cancellationToken);
 
                 log.Error($"Exception while processing update from " +
-                          $"{update.Message.From.Username} {update.Message.From.Id}");
+                          $"{update.Message.From.Username} {update.Message.From.Id}, error message: {e.Message}");
             }
         }
 

@@ -16,6 +16,7 @@ namespace ConsoleUI
         private static readonly ILog log = LogManager.GetLogger(typeof(Program));
 
         private static readonly string Token = Configuration.GetSection("TelegramBotToken").Value;
+        private static readonly string DbConnectionString = Configuration.GetConnectionString("TelegramBotDatabase");
         private static readonly ITelegramBotClient Bot = new TelegramBotClient(Token);
 
         static async Task Main(string[] args)
@@ -23,6 +24,11 @@ namespace ConsoleUI
             XmlConfigurator.Configure();
 
             log.Debug("Starting the program");
+
+            if (args.Length > 0)
+            {
+                await NotifyUsers(string.Join(' ', args));
+            }
 
             try
             {
@@ -33,6 +39,12 @@ namespace ConsoleUI
                 Console.WriteLine(e);
                 log.Error(e.Message);
             }
+        }
+
+        private static async Task NotifyUsers(string notification)
+        {
+            var notifier = new UsersNotifier(Bot, DbConnectionString);
+            await notifier.NotifyAllAsync(notification);
         }
     }
 }
