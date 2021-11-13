@@ -9,6 +9,7 @@ namespace DataAnalysisLib.TextAnalyzer
     public class TextAnalyzer : ITextAnalyzer
     {
         private const int ZeroCount = 0;
+        private const char Space = ' ';
         private readonly TextAnalysisResults results = new TextAnalysisResults();
         private readonly Stream dataSource;
 
@@ -21,12 +22,16 @@ namespace DataAnalysisLib.TextAnalyzer
         {
             await ProcessDataAsync();
 
+            await results.CalculateFrequenciesAsync();
+
             AnalysisComplete = true;
         }
 
-        public KeyValuePair<char, int> MostFrequent => results.MostFrequent;
+        public CharStat MostFrequent => results.MostFrequent;
 
-        public KeyValuePair<char, int> LeastFrequent => results.LeastFrequent;
+        public CharStat LeastFrequent => results.LeastFrequent;
+
+        public IEnumerable<CharStat> Results => results.Distribution.Values;
 
         public bool AnalysisComplete { get; private set; }
 
@@ -53,7 +58,13 @@ namespace DataAnalysisLib.TextAnalyzer
             }
         }
 
-        private void ProcessCharacter(char ch) => results.Add(ch);
+        private void ProcessCharacter(char ch)
+        {
+            if (ch != Space)
+            {
+                results.Add(ch);
+            }
+        }
 
         private async IAsyncEnumerable<string> EmitLinesAsync()
         {

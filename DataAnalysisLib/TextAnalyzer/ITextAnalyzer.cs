@@ -7,9 +7,13 @@ namespace DataAnalysisLib.TextAnalyzer
     {
         Task AnalyzeAsync();
 
-        KeyValuePair<char, int> MostFrequent { get; }
+        CharStat MostFrequent { get; }
 
-        KeyValuePair<char, int> LeastFrequent { get; }
+        CharStat LeastFrequent { get; }
+
+        IEnumerable<CharStat> Results { get; }
+
+        bool AnalysisComplete { get; }
 
         int GetCountOf(char ch);
     }

@@ -1,16 +1,22 @@
-﻿using DataAnalysisLib.TextAnalyzer;
+﻿using System.IO;
+using System.Threading.Tasks;
+using DataAnalysisLib.TextAnalyzer;
 
 namespace DataAnalysisLib.TextAnalysisVisualization
 {
-    public abstract class BaseTextAnalysisVisualizer<TResult>
+    public abstract class BaseTextAnalysisVisualizer
     {
+        protected readonly FileInfo outputFile;
         protected ITextAnalyzer analyzer;
 
-        protected BaseTextAnalysisVisualizer(ITextAnalyzer analyzer)
+        protected BaseTextAnalysisVisualizer(FileInfo outputFile,  ITextAnalyzer analyzer)
         {
+            this.outputFile = outputFile;
             this.analyzer = analyzer;
         }
 
-        public abstract TResult Plot();
+        public OrderingCriteria OrderingCriteria { get; set; }
+
+        public abstract Task PlotAsync();
     }
 }

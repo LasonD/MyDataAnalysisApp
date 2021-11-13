@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DataAnalysisLib.TextAnalyzer
 {
@@ -30,16 +31,16 @@ namespace DataAnalysisLib.TextAnalyzer
             TotalCount++;
         }
 
-        public void CalculateFrequencies()
+        public Task CalculateFrequenciesAsync() => Task.Run(() =>
         {
             foreach (var stat in charStats.Values)
             {
                 stat.CalcFrequency(TotalCount);
             }
-        }
+        });
 
-        public KeyValuePair<char, CharStat> MostFrequent => Distribution.OrderByDescending(x => x.Value).First();
+        public CharStat MostFrequent => Distribution.OrderByDescending(x => x.Value).First().Value;
 
-        public KeyValuePair<char, CharStat> LeastFrequent => Distribution.OrderBy(x => x.Value).First();
+        public CharStat LeastFrequent => Distribution.OrderBy(x => x.Value).First().Value;
     }
 }

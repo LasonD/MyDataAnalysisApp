@@ -10,7 +10,7 @@ namespace DataAnalysisLib.TextAnalyzer
 
         public double Frequency { get; set; }
 
-        public int Occurrences { get; set; }
+        public double Occurrences { get; set; }
 
         public void CalcFrequency(long total) => Frequency = Occurrences / total;
 
